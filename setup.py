@@ -3,15 +3,29 @@ import sys, os
 
 from redcaphelper import __version__
 
-setup(
+setup (
 	name='redcaphelper',
 	version=version,
-	description="Utilities for working with the REDCap database",
+	description="Utilities for working with the REDCap web database",
 	long_description="""\
-	It's useful to programatically work with the REDCap database. This package
-	builds upon the redcap package, to provide facilities for easy uploading or
-	downloading data via scripts. """,
-	classifiers=[], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
+When working with a REDCap database, several regular tasks can become tedious -
+uploading a large dataset in parts, backing up the data & schema, extracting
+the latest import template. The package provides code fto help with these
+routine tasks, allowing them to be easily scripted and automated. It heavily
+leverages the PyCap package.""",
+	classifiers=[
+		'Development Status :: 4 - Beta',
+		'Environment :: Console',
+		'Intended Audience :: Science/Research',
+		'Intended Audience :: Information Technology',
+		'License :: OSI Approved :: MIT License',
+		'Programming Language :: Python',
+		'Programming Language :: Python :: 2',
+		'Programming Language :: Python :: 3',
+		'Topic :: Scientific/Engineering :: Medical Science Apps.',
+		'Topic :: System :: Archiving :: Backup',
+		
+	],
 	keywords='database REDCap pycap',
 	author='Paul Agapow & Kester Jarvis',
 	author_email='paul@agapow.net',
@@ -21,9 +35,13 @@ setup(
 	include_package_data=True,
 	zip_safe=False,
 	install_requires=[
-		'redcap',
+		'pycap',
 	],
 	entry_points="""
-		# -*- Entry points: -*-
+		'console_scripts': [
+			'redcap-download = redcaphelper.scripts.download:main',
+			'redcap-upload = redcaphelper.scripts.upload:main',
+			'redcap-backup = redcaphelper.scripts.backup:main',
+		],
 	""",
 )

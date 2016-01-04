@@ -1,0 +1,11 @@
+Metadata-Version: 1.0
+Name: redcaphelper
+Version: 0.1dev
+Summary: Utilities for working with the REDCap database
+Home-page: http://www.agapow.net/software/redcaphelper
+Author: Paul Agapow & Kester Jarvis
+Author-email: paul@agapow.net
+License: MIT
+Description: It's useful to programatically work with the REDCap database, e.g. for uploading or downloading data via scripts. This package builds upon the functionality of the redcap package, to expand upon
+Keywords: database REDCap pycap
+Platform: UNKNOWN

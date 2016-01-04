@@ -1,0 +1,9 @@
+setup.cfg
+setup.py
+redcaphelper/__init__.py
+redcaphelper.egg-info/PKG-INFO
+redcaphelper.egg-info/SOURCES.txt
+redcaphelper.egg-info/dependency_links.txt
+redcaphelper.egg-info/entry_points.txt
+redcaphelper.egg-info/not-zip-safe
+redcaphelper.egg-info/top_level.txt

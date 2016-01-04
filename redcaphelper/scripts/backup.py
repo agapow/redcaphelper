@@ -9,6 +9,7 @@ all the settings at the top.
 """
 
 from __future__ import print_function
+from builtins import str
 
 __version__ = 0.3
 
@@ -48,8 +49,8 @@ def safe_format (s, mapping):
 	import string
 	t = string.Template (s)
 	return t.safe_substitute (mapping)
-	
-	
+
+
 def datetime_str ():
 	dt = datetime.datetime.now()
 	return dt.strftime (DATETIME_FMT)
@@ -73,10 +74,10 @@ def run_one_backup (s, encrypt, log, saveas):
 	assert 'name' in s, 'source missing name'
 	assert 'url' in s, 'source %s missing name' % s['name']
 	assert 'token' in s, 'source %s missing name' %  s['name']
-	
+
 	## Main:
 	progress_msg ('Backing up %s ...' % s['name'])
-	
+
 	for t in ['data', 'schema']:
 	# build the save path name
 		savepath = safe_format (saveas, {
@@ -101,11 +102,11 @@ def run_one_backup (s, encrypt, log, saveas):
 		if os.system (cli):
 			raise Exception ("failed to execute %s backup for '%s'" % (t, s['name']))
 
-	
+
 
 ### MAIN
 
-def main ():	
+def main ():
 	progress_msg ("Reading config file '%s' ..." % BACKUP_PARAMS)
 	backup_params = read_db_list (BACKUP_PARAMS)
 	sources = backup_params.get ('sources', None)
@@ -113,11 +114,11 @@ def main ():
 	encrypt = str (backup_params.get ('encrypt', ''))
 	log = backup_params.get ('log', LOG)
 	saveas = backup_params.get ('saveas', SAVEAS)
-	
+
 	for s in sources:
 		run_one_backup (s, encrypt, log, saveas)
-	
-	
+
+
 if __name__ == '__main__':
 	import sys
 	main()

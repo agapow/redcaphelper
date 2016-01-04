@@ -7,9 +7,11 @@ mostly just for neatness.
 
 ### IMPORTS
 
+from __future__ import absolute_import
+
 import redcap
 
-import .const
+import .consts
 import .utils
 
 __all__ = [

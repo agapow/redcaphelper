@@ -1,19 +1,25 @@
 """
 Module-wide constants.
 
-For example.
 """
 
 ### IMPORTS
 
 __all__ = [
-	
+	'DEF_SLEEP',
+	'DEF_UPLOAD_CHUNK_SZ',
+	'DEF_DOWNLOAD_CHUNK_SZ',
+	'SCHEMA_FLD_ORDER',
 ]
 
 
 ### CONSTANTS & DEFINES
 
 DEF_SLEEP = 1
+
+DEF_UPLOAD_CHUNK_SZ = 100
+
+DEF_DOWNLOAD_CHUNK_SZ = 100
 
 SCHEMA_FLD_ORDER = [
 	'field_name',
@@ -38,5 +44,3 @@ SCHEMA_FLD_ORDER = [
 
 
 ### END ###
-
-

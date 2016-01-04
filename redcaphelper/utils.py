@@ -4,6 +4,9 @@ Very assorted utilities and odds and ends for use in module.
 
 ### IMPORTS
 
+from __future__ import print_function
+from builtins import next
+
 __all__ = [
 	'read_csv',
 	'write_csv',
@@ -38,7 +41,7 @@ def write_csv (recs, out_file, hdr_flds=None, sort_on=None):
 	if sort_on:
 		recs = sorted (recs, key=lambda x: x[sort_on])
 	if hdr_flds is None:
-		hdr_flds = recs[0].keys()
+		hdr_flds = list(recs[0].keys())
 
 	## Main:
 	with open (out_file, 'w') as out_hndl:
@@ -58,7 +61,7 @@ def read_import_template (in_file):
 		fields_rdr = csv.reader (in_hndl)
 		# there's a blank column in import file for unknown reasons
 		# get rid of it
-		hdr = [h for h in fields_rdr.next() if h]
+		hdr = [h for h in next(fields_rdr) if h]
 		return hdr
 
 
@@ -74,7 +77,7 @@ def write_redcap_csv (recs, out_file, hdr_flds):
 	# check what fields aren't being written
 	all_rec_fields = []
 	for r in recs:
-		all_rec_fields.extend (r.keys())
+		all_rec_fields.extend (list(r.keys()))
 	all_rec_fields = set (all_rec_fields)
 
 	long_fields = [f for f in all_rec_fields if 26 < len (f)]
@@ -104,7 +107,7 @@ def write_yaml (recs, out_file, hdr_flds=None, sort_on=None):
 	if sort_on:
 		recs = sorted (recs, key=lambda x: x[sort_on])
 	if hdr_flds is None:
-		hdr_flds = recs[0].keys()
+		hdr_flds = list(recs[0].keys())
 
 	## Main:
 	from yaml import load, dump

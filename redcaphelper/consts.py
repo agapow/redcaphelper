@@ -1,5 +1,7 @@
 """
 Module-wide constants.
+
+For example.
 """
 
 ### IMPORTS

@@ -8,6 +8,7 @@ from __future__ import print_function
 from builtins import next
 
 __all__ = [
+	'msg_progress',
 	'read_csv',
 	'write_csv',
 	'read_import_template',
@@ -18,6 +19,24 @@ __all__ = [
 ### CONSTANTS & DEFINES
 
 ### CODE ###
+
+## Messaging
+
+def msg_progress (msg, end=False):
+	"""
+	Print some diagnostic messages showing that things are happening.
+
+	"""
+	# XXX(paul): this is balls, probably needs to be replaced with
+	# decent messaging /logging or at least something with configurable
+	# verbosity
+	# XXX(paul): need a msg_error / msg_info / etc.
+	if end:
+		suffix = '.'
+	else:
+		suffix = ' ...'
+	print ('%s%s' % (msg, suffix))
+
 
 ## IO: Manipulating CSV files
 

@@ -78,15 +78,15 @@ class Connection (object):
 		# TODO(paul): need date format option?
 
 		total_len = len (recs)
-		for x in range (0, total_len, chunk_sz):
-			start = x
-			stop = min (total_len, x+chunk_sz)
-			self.print_progress ("Uploading records %s-%s of %s" % (start, stop-1, total_len))
+		for start in range (0, total_len, chunk_sz):
+			stop = min (total_len, start+chunk_sz)
+			utils.msg_progress ("Uploading records %s-%s of %s" % (start, stop-1, total_len))
 			response = self._proj.import_records (
 				recs[start:stop],
 				overwrite='overwrite' if overwrite else 'normal'
 			)
-			self._print_progress (response)
+			# XXX(paul): more informative messages
+			utils.msg_progress (response)
 			if sleep and (stop != total_len):
 				time.sleep (sleep)
 
@@ -119,14 +119,23 @@ class Connection (object):
 
 		id_fld = self._proj.def_field
 		record_list = self._proj.export_records (fields=[id_fld])
-		records = [r[id_fld] for r in record_list]
+		record_ids = [r[id_fld] for r in record_list]
 
 		try:
 			response = []
-			for record_chunk in chunks (records, chunk_sz):
-				chunked_response = project.export_records (records=record_chunk)
+			total_len = len (record_ids)
+			for start in range (0, total_len, chunk_sz):
+				stop = min (total_len, start+chunk_sz)
+				msg = "Downloading records %s-%s of %s (%s-%s)" % (
+					start, stop-1, total_len, record_ids[start], record_ids[stop-1])
+				utils.msg_progress ("Downloading records %s-%s of %s" % (
+					start, stop-1, total_len))
+				chunked_response = project.export_records (records=record_ids[start:stop])
+			#for record_chunk in chunks (record_ids, chunk_sz):
+			#	chunked_response = project.export_records (records=record_chunk)
 				response.extend (chunked_response)
 		except redcap.RedcapError:
+			# XXX(paul): shouldn't we just raise the intial error
 			msg = "Chunked export failed for chunk_size={:d}".format (chunk_sz)
 			raise ValueError (msg)
 		else:
@@ -157,13 +166,7 @@ class Connection (object):
 		"""
 		return [r['Variable / Field Name'] for r in self.export_schema()]
 
-	def _print_progress (self, msg):
-		"""
-		Print some diagnostic messages showing that things are happening.
 
-		"""
-		# XXX: this is balls, probably needs to be replaced with decent messaging
-		print (msg, '...')
 
 
 

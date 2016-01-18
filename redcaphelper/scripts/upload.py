@@ -6,7 +6,7 @@ Downloadthe contents or schema of a REDCap database.
 ### IMPORTS
 
 import os
-from redcaphelper import utils, connection
+from redcaphelper import utils, csvutils, connection
 
 ### MAIN
 
@@ -51,7 +51,7 @@ def main (clargs):
 	
 	#TODO: KJ - Need code for uploading to database here; need to do some error handling of input etc
 	utils.msg_progress ('Uploading records')
-	recs = utils.read_csv(args.infile)
+	recs = csvutils.read_csv(args.infile)
 	conn.import_recs(recs)
 	
 	utils.msg_progress ("Finished", True)

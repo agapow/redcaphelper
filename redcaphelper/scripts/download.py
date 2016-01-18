@@ -6,7 +6,7 @@ Downloadthe contents or schema of a REDCap database.
 ### IMPORTS
 
 import os
-from redcaphelper import utils, connection, constants
+from redcaphelper import utils, csvutils, connection, constants
 
 ### MAIN
 
@@ -59,7 +59,7 @@ def main (clargs):
 	args = parse_clargs (sys.argv[1:])
 
 	# connect to db & download backup
-	tils.msg_progress ('Connecting to %s' % args.url)
+	utils.msg_progress ('Connecting to %s' % args.url)
 	conn = Connection (args.url, args.token)
 	
 	#???: KJ -Single script for downloading both schema and records (as now), or better to have one for each?
@@ -67,8 +67,8 @@ def main (clargs):
 	recs = conn.export_recs() if args.type == 'data' else conn.export_schema()
 	
 	utils.progress_msg ('Saving backup as %s' % args.outfile)
-	flds = conn.export_field_names() if args.type == 'data' else redcaphelper.constants.SCHEMA_FLD_ORDER
-	utils.write_csv (recs, args.outfile, hdr_flds=flds)
+	flds = conn.export_field_names() if args.type == 'data' else constants.SCHEMA_FLD_ORDER
+	csvutils.write_csv (recs, args.outfile, hdr_flds=flds)
 	
 	utils.msg_progress ("Finished", True)
  

@@ -11,7 +11,7 @@ __all__ = [
 	'msg_progress',
 	'read_csv',
 	'write_csv',
-	'read_import_template',
+	'read_csv_headers',
 	'write_redcap_csv',
 ]
 
@@ -20,11 +20,48 @@ __all__ = [
 
 ### CODE ###
 
+## Chunking
+# For use where we have to iterate over records in blocks, such as downloading.
+# Or uploading. Oh, REDCap, you scamp.
+
+
+def chunked_enumerate (seq, chunk_sz):
+	"""
+	Yield successive n-sized chunks from l, as indices
+
+	Args:
+		seq (seq): the collection to be iterated over
+		chunk_sz (int): the size or index 'jump' for each chunk
+
+	Returns:
+		yields the start and stop indices of each chunk
+
+	This allows us to iterate over large sequences in pieces. Note that this
+	doesn't return the actual elements but their indices. This allows us to
+	track and post progress.
+
+	"""
+	## Preconditions:
+	assert 0 < n, "chunk size '%s' must be greater than 0" % chunk_sz
+
+	## Main:
+	total_len = len (seq)
+	for i in range (0, len (seq), chunk_sz):
+		start = i
+		stop = min (total_len, i+chunk_sz)
+		yield start, stop
+
+
+
 ## Messaging
 
 def msg_progress (msg, end=False):
 	"""
 	Print some diagnostic messages showing that things are happening.
+
+	Args:
+		msg (str): a message to print out to the console
+		end (bool): end this message with a full stop?
 
 	"""
 	# XXX(paul): this is balls, probably needs to be replaced with
@@ -40,22 +77,36 @@ def msg_progress (msg, end=False):
 
 ## IO: Manipulating CSV files
 
-def read_csv (in_file):
+def read_csv (in_pth):
 	"""
-	Slurp in the contents of a CSV file as a series of dicts.
+	Slurp in the contents of a CSV file.
+
+	Args:
+		in_pth (str): the path of the CSV file to read in
+
+	Returns:
+		a sequence of records as dicts.
+
 	"""
-	with open (in_file, 'rU') as in_hndl:
+	with open (in_pth, 'rU') as in_hndl:
 		rdr = csv.DictReader (in_hndl)
 		return [r for r in rdr]
 
 
-def write_csv (recs, out_file, hdr_flds=None, sort_on=None):
+def write_csv (recs, out_pth, hdr_flds=None, sort_on=None):
 	"""
 	Write a set of records to a CSV file.
+
+	Args:
+		recs (seq): CSV records as dictionaries
+		out_pth (str): the path of the CSV file to read in
+		hdr_flds (seq): column headers for the file
 
 	Records are sorted on the field passed Extra fields are ignored, fields
 	that are not supplied are filled with an empty string.
 	"""
+	# XXX(paul): do we really need the sort_or param?
+
 	## Preconditions & preparation:
 	if sort_on:
 		recs = sorted (recs, key=lambda x: x[sort_on])
@@ -63,7 +114,7 @@ def write_csv (recs, out_file, hdr_flds=None, sort_on=None):
 		hdr_flds = list(recs[0].keys())
 
 	## Main:
-	with open (out_file, 'w') as out_hndl:
+	with open (out_pth, 'w') as out_hndl:
 		wrtr = csv.DictWriter (out_hndl, fieldnames=hdr_flds,
 			extrasaction='ignore', restval='')
 		wrtr.writeheader()
@@ -72,9 +123,9 @@ def write_csv (recs, out_file, hdr_flds=None, sort_on=None):
 
 ## IO: REDCap files
 
-def read_import_template (in_file):
+def read_csv_headers (in_file):
 	"""
-	Get the header fields (and their order) from import template.
+	Get the header fields (and their order) from a CSV file.
 	"""
 	with open (in_file, 'rU') as in_hndl:
 		fields_rdr = csv.reader (in_hndl)
@@ -121,12 +172,20 @@ def write_redcap_csv (recs, out_file, hdr_flds):
 
 ## IO: other
 
-def write_yaml (recs, out_file, hdr_flds=None, sort_on=None):
+def write_yaml (recs, out_pth, sort_on=None):
+	"""
+	Dump a series of records to a file in YAML format.
+
+	Args:
+		recs (seq): CSV records as dictionaries
+		out_pth (str): the path of the YAML file to write to
+		sort_on (str): the column header to sort records on
+
+	Mainly for debugging purposes.
+	"""
 	## Preconditions & preparation:
 	if sort_on:
 		recs = sorted (recs, key=lambda x: x[sort_on])
-	if hdr_flds is None:
-		hdr_flds = list(recs[0].keys())
 
 	## Main:
 	from yaml import load, dump
@@ -135,11 +194,12 @@ def write_yaml (recs, out_file, hdr_flds=None, sort_on=None):
 	except ImportError:
 		 from yaml import Loader, Dumper
 
-	with open (out_file, 'w') as out_hndl:
+	with open (out_pth, 'w') as out_hndl:
 		output = dump (recs, out_hndl, Dumper=Dumper)
 
 
 ## String formatting
+# XXX: get rid of all this fomratting shit?
 
 def safe_format (s, mapping, def_mapping=True):
 	"""

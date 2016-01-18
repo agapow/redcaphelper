@@ -11,8 +11,8 @@ from __future__ import absolute_import
 
 import redcap
 
-import .consts
-import .utils
+from . import consts
+from . import utils
 
 __all__ = [
 	'Connection'
@@ -77,26 +77,38 @@ class Connection (object):
 		# TODO(paul): have seperate upload_chunk function for better handling?
 		# TODO(paul): need date format option?
 
+		## Main:
+		id_fld = self._proj.def_field
 		total_len = len (recs)
-		for start in range (0, total_len, chunk_sz):
-			stop = min (total_len, start+chunk_sz)
-			utils.msg_progress ("Uploading records %s-%s of %s" % (start, stop-1, total_len))
+
+		for start, stop in utils.chunked_enumerate (recs, chunk_sz):
+			msg = "Uploading records %s-%s of %s ('%s' to '%s')" % (
+				start, stop-1, total_len, recs[start][id_fld], recs[stop-1][id_fld]
+			)
+			utils.msg_progress (msg)
 			response = self._proj.import_records (
 				recs[start:stop],
 				overwrite='overwrite' if overwrite else 'normal'
 			)
+
 			# XXX(paul): more informative messages
 			utils.msg_progress (response)
 			if sleep and (stop != total_len):
 				time.sleep (sleep)
 
-	def export_recs (self, chunk_sz=consts.DEF_DOWNLOAD_CHUNK_SZ, flds=None):
+	def export_recs (self, chunk_sz=consts.DEF_DOWNLOAD_CHUNK_SZ, ids=None,
+			flds=None):
 		"""
 		Download data in chunks to avoid memory errors.
 
 		Args:
 			chunk_sz (int): number of records to be downloaded in each batch
-			flds (sequence): a list of the fields to be exported
+			flds (seq): a list of the fields to be exported, defaults to all
+			ids (seq): a list of the IDs of the records to be exported, defaults
+				to all
+
+		Returns:
+			a series of records as dicts
 
 		Exporting is also a memory-hungry process for REDCap. Thus we make it
 		easy on the server by batching up the downloaded records and combining
@@ -110,13 +122,6 @@ class Connection (object):
 		flds = flds or self._proj.def_field
 
 		## Main:
-		def chunks(l, n):
-			"""
-			Yield successive n-sized chunks from list l
-			"""
-			for i in range (0, len(l), n):
-				yield l[i:i+n]
-
 		id_fld = self._proj.def_field
 		record_list = self._proj.export_records (fields=[id_fld])
 		record_ids = [r[id_fld] for r in record_list]
@@ -124,19 +129,20 @@ class Connection (object):
 		try:
 			response = []
 			total_len = len (record_ids)
-			for start in range (0, total_len, chunk_sz):
-				stop = min (total_len, start+chunk_sz)
-				msg = "Downloading records %s-%s of %s (%s-%s)" % (
-					start, stop-1, total_len, record_ids[start], record_ids[stop-1])
-				utils.msg_progress ("Downloading records %s-%s of %s" % (
-					start, stop-1, total_len))
-				chunked_response = project.export_records (records=record_ids[start:stop])
-			#for record_chunk in chunks (record_ids, chunk_sz):
-			#	chunked_response = project.export_records (records=record_chunk)
+
+			for start, stop in utils.chunked_enumerate (record_ids, chunk_sz):
+				msg = "Uploading records %s-%s of %s ('%s' to '%s')" % (
+					start, stop-1, total_len, recs[start], recs[stop-1]
+				)
+				utils.msg_progress (msg)
+
+				chunked_response = project.export_records (
+					records=record_ids[start:stop])
 				response.extend (chunked_response)
+
 		except redcap.RedcapError:
 			# XXX(paul): shouldn't we just raise the intial error
-			msg = "Chunked export failed for chunk_size={:d}".format (chunk_sz)
+			msg = "Chunked export failed for chunk_size %s" % chunk_sz
 			raise ValueError (msg)
 		else:
 			return response

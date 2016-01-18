@@ -9,9 +9,9 @@ __version__ = '0.1'
 
 ### IMPORTS
 
+
 from .consts import *
-from .download import *
-from .upload import *
+from .connection import *
 from .utils import *
 
 

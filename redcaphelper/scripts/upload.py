@@ -14,6 +14,8 @@ def parse_clargs (clargs):
 	import argparse
 	aparser = argparse.ArgumentParser()
 
+	#TODO: KJ - need to add other clargs here; check the connection object
+
 	aparser.add_argument ('-u', "--url",
 		help='url for upload',
 		default=None,
@@ -49,7 +51,7 @@ def main (clargs):
 	utils.msg_progress ('Connecting to %s' % args.url)
 	conn = Connection (args.url, args.token)
 	
-	#TODO: KJ - Need code for uploading to database here; need to do some error handling of input etc
+	#TODO: KJ - Need to do some error handling of input etc
 	utils.msg_progress ('Uploading records')
 	recs = csvutils.read_csv(args.infile)
 	conn.import_recs(recs)

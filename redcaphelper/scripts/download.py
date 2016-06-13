@@ -5,6 +5,7 @@ Downloadthe contents or schema of a REDCap database.
 
 ### IMPORTS
 
+<<<<<<< HEAD
 from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
@@ -75,6 +76,10 @@ def save_backup (recs, pth, flds):
 	utils.write_csv (recs, pth, flds)
 
 
+=======
+import os
+from redcaphelper import utils, csvutils, connection, constants
+>>>>>>> 99de622d7af7dbd7e60498edebb1aa31db58361b
 
 ### MAIN
 
@@ -83,7 +88,7 @@ def parse_clargs (clargs):
 	aparser = argparse.ArgumentParser()
 
 	aparser.add_argument ('-u', "--url",
-		help='url for uploading to',
+		help='url for download',
 		default=None,
 	)
 
@@ -94,13 +99,14 @@ def parse_clargs (clargs):
 
 	aparser.add_argument ('-o', "--outfile",
 		help='where the backup is to be saved',
-		default=None,
+		default='redcap.out.csv',
 	)
 
-	aparser.add_argument ('-l', "--log",
-		help='where to log backup actions',
-		default=None,
-	)
+	#TODO: KJ - Not sure what's being done with these logs; to check & finish later
+	#aparser.add_argument ('-l', "--log",
+	#	help='where to log backup actions',
+	#	default=None,
+	#)
 
 	aparser.add_argument ('-y', "--type",
 		help='download schema or data',
@@ -126,6 +132,7 @@ def main (clargs):
 	args = parse_clargs (sys.argv[1:])
 
 	# connect to db & download backup
+<<<<<<< HEAD
 	utils.progress_msg ('Connecting to %s' % args.url)
 	conn = new_connection (args.url, args.token)
 
@@ -143,6 +150,22 @@ def main (clargs):
 	utils.progress_msg ("Finished", True)
 
 
+=======
+	utils.msg_progress ('Connecting to %s' % args.url)
+	conn = Connection (args.url, args.token)
+	
+	#???: KJ -Single script for downloading both schema and records (as now), or better to have one for each?
+	utils.msg_progress ('Downloading %s backup' % args.type)
+	recs = conn.export_recs() if args.type == 'data' else conn.export_schema()
+	
+	utils.progress_msg ('Saving backup as %s' % args.outfile)
+	flds = conn.export_field_names() if args.type == 'data' else constants.SCHEMA_FLD_ORDER
+	csvutils.write_csv (recs, args.outfile, hdr_flds=flds)
+	
+	utils.msg_progress ("Finished", True)
+ 
+	
+>>>>>>> 99de622d7af7dbd7e60498edebb1aa31db58361b
 
 if __name__ == '__main__':
 	main()

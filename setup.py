@@ -5,7 +5,7 @@ from redcaphelper import __version__
 
 setup (
 	name='redcaphelper',
-	version=version,
+	version=__version__,
 	description="Utilities for working with the REDCap web database",
 	long_description="""\
 When working with a REDCap database, several regular tasks can become tedious -
@@ -24,7 +24,7 @@ leverages the PyCap package.""",
 		'Programming Language :: Python :: 3',
 		'Topic :: Scientific/Engineering :: Medical Science Apps.',
 		'Topic :: System :: Archiving :: Backup',
-		
+
 	],
 	keywords='database REDCap pycap',
 	author='Paul Agapow & Kester Jarvis',
@@ -37,11 +37,12 @@ leverages the PyCap package.""",
 	install_requires=[
 		'pycap',
 	],
-	entry_points="""
+	entry_points={
 		'console_scripts': [
 			'redcap-download = redcaphelper.scripts.download:main',
 			'redcap-upload = redcaphelper.scripts.upload:main',
-			'redcap-backup = redcaphelper.scripts.backup:main',
+			'redcap-fill-template = redcaphelper.scripts.filltemplate:main',
+			'redcap-make-vocab = redcaphelper.scripts.mkvocab:main',
 		],
-	""",
+	},
 )

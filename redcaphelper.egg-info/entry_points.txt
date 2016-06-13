@@ -1,5 +1,4 @@
 [console_scripts]
-redcap-backup = redcaphelper.scripts.backup:main
 redcap-download = redcaphelper.scripts.download:main
 redcap-fill-template = redcaphelper.scripts.filltemplate:main
 redcap-make-vocab = redcaphelper.scripts.mkvocab:main

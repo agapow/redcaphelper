@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: redcaphelper
-Version: 0.1.dev0
+Version: 0.2.dev0
 Summary: Utilities for working with the REDCap web database
 Home-page: http://www.agapow.net/software/redcaphelper
 Author: Paul Agapow & Kester Jarvis

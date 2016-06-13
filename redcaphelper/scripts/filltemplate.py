@@ -43,6 +43,8 @@ def parse_clargs (clargs):
 		description='fill in a REDCap db import template from a list of records'
 	)
 
+	aparser.add_argument('--version', action='version', version='%s' % version)
+
 	aparser.add_argument ("csvfile", help='CSV file to be imported to template')
 
 	aparser.add_argument ("template", help='a REDCap import template')

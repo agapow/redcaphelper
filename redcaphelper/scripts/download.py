@@ -18,7 +18,7 @@ import os
 import io
 
 import redcap
-from redcaphelper import utils, csvutils, connection, constants
+from redcaphelper import utils, csvutils, Connection, consts
 from redcaphelper import __version__ as version
 
 
@@ -65,15 +65,13 @@ def download_backup (conn, btype='data'):
 	return csv_recs
 
 
-def save_backup (recs, pth, flds):
-	utils.write_csv (recs, pth, flds)
-
-
 ### MAIN
 
 def parse_clargs ():
 	import argparse
 	aparser = argparse.ArgumentParser()
+
+	aparser.add_argument('--version', action='version', version='%s' % version)
 
 	aparser.add_argument ('-u', "--url",
 		help='url for download',
@@ -99,35 +97,42 @@ def parse_clargs ():
 	args = aparser.parse_args()
 
 	if args.url is None:
-		args.url = os.environ['REDCAP_API_URL']
+		args.url = os.environ.get ('REDCAP_API_URL', None)
 	if args.token is None:
-		args.token= os.environ['REDCAP_API_TOKEN']
+		args.token= os.environ.get ('REDCAP_API_TOKEN', None)
+
+	assert args.url, 'need REDCap database API url'
+	assert args.token, 'need REDCap database API token'
+
+	if not args.url.endswith ('/api/'):
+		print ("REDCap API url '%s' doesn't look right" % args.url)
+
 	if args.outfile is None:
 		if args.type is 'data':
-			args.outfile = 'args.data.csv'
+			args.outfile = 'redcap-download.data.csv'
 		else:
-			args.outfile = 'args.schema.csv'
+			args.outfile = 'redcap-download.schema.csv'
 
 	return args
 
 
 
-def main (clargs):
+def main():
 	# get arguments (source db and output file)
 	args = parse_clargs()
 
 	# connect to db & download backup
-	utils.progress_msg ('Connecting to %s' % args.url)
-	conn = new_connection (args.url, args.token)
+	utils.msg_progress ('Connecting to %s' % args.url)
+	conn = Connection (args.url, args.token)
 
-	utils.progress_msg ('Downloading %s backup' % args.type)
-	recs = download_backup (conn, btype=args.type)
+	utils.msg_progress ('Downloading %s backup' % args.type)
+	recs = conn.export_recs() if (args.type == 'data') else conn.export_schema()
 
-	utils.progress_msg ('Saving backup as %s' % save_name)
-	flds = conn.field_names if args.type == 'data' else SCHEMA_FLD_ORDER
-	save_backup (recs, args.outfile, flds)
+	utils.msg_progress ('Saving backup as %s' % args.outfile)
+	flds = conn._proj.field_names if args.type == 'data' else SCHEMA_FLD_ORDER
+	csvutils.write_csv (recs, args.outfile, flds)
 
-	utils.progress_msg ("Finished", True)
+	utils.msg_progress ("Finished", True)
 
 
 

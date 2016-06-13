@@ -25,7 +25,7 @@ def parse_clargs (clargs):
 		description='download contents or schema of a REDCap database'
 	)
 
-	#TODO: KJ - need to add other clargs here; check the connection object
+	aparser.add_argument('--version', action='version', version='%s' % version)
 
 	aparser.add_argument ('-u', "--url",
 		help='url for upload',
@@ -37,6 +37,12 @@ def parse_clargs (clargs):
 		default=None,
 	)
 
+	aparser.add_argument ('-c', "--chunk-size",
+		help='number of records to upload at a time (packet size)',
+		type=int,
+		default=consts.,
+	)
+
 	aparser.add_argument ("infile",
 		help='file to be imported to redcap'
 	)
@@ -44,9 +50,15 @@ def parse_clargs (clargs):
 	args = aparser.parse_args()
 
 	if args.url is None:
-		args.url = os.environ['REDCAP_API_URL']
+		args.url = os.environ.get ('REDCAP_API_URL', None)
 	if args.token is None:
-		args.token= os.environ['REDCAP_API_TOKEN']
+		args.token= os.environ.get ('REDCAP_API_TOKEN', None)
+
+	assert args.url, 'need REDCap database API url'
+	assert args.token, 'need REDCap database API token'
+
+	if not args.url.endswith ('/api/'):
+		print ("REDCap API url '%s' doesn't look right" % args.url)
 
 	return args
 
@@ -56,14 +68,16 @@ def main (clargs):
 	import sys
 	args = parse_clargs (sys.argv[1:])
 
-	#Connect to database
+	# connect to database
 	utils.msg_progress ('Connecting to %s' % args.url)
 	conn = Connection (args.url, args.token)
 
-	#TODO: KJ - Need to do some error handling of input etc
+	# read and upoad records
+	utils.msg_progress ('Reading %s' % args.infile)
+	recs = csvutils.read_csv (args.infile)
+
 	utils.msg_progress ('Uploading records')
-	recs = csvutils.read_csv(args.infile)
-	conn.import_recs(recs)
+	conn.import_recs (recs)
 
 	utils.msg_progress ("Finished", True)
 

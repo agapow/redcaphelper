@@ -14,6 +14,8 @@ standard_library.install_aliases()
 from builtins import range
 #from builtins import next
 
+import csv
+
 __all__ = [
 	'read_csv',
 	'write_csv',

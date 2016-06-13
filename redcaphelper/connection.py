@@ -15,6 +15,14 @@ from future import standard_library
 standard_library.install_aliases()
 from builtins import object
 
+import csv
+
+# Py2 vs py3
+try:
+	from StringIO import StringIO
+except:
+	from io import StringIO
+
 import redcap
 
 from . import consts
@@ -137,12 +145,12 @@ class Connection (object):
 			total_len = len (record_ids)
 
 			for start, stop in utils.chunked_enumerate (record_ids, chunk_sz):
-				msg = "Uploading records %s-%s of %s ('%s' to '%s')" % (
-					start, stop-1, total_len, recs[start], recs[stop-1]
+				msg = "Downloading records %s-%s of %s ('%s' to '%s')" % (
+					start+1, stop, total_len, record_ids[start], record_ids[stop-1]
 				)
 				utils.msg_progress (msg)
 
-				chunked_response = project.export_records (
+				chunked_response = self._proj.export_records (
 					records=record_ids[start:stop])
 				response.extend (chunked_response)
 
@@ -165,7 +173,7 @@ class Connection (object):
 
 		"""
 		csv_txt = self._proj.export_metadata (format='csv')
-		csv_rdr = csv.DictReader (io.StringIO (csv_txt))
+		csv_rdr = csv.DictReader (StringIO (csv_txt))
 		return [r for r in csv_rdr]
 
 	def export_field_names (self):

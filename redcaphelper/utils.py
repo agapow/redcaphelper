@@ -45,7 +45,7 @@ def chunked_enumerate (seq, chunk_sz):
 
 	"""
 	## Preconditions:
-	assert 0 < n, "chunk size '%s' must be greater than 0" % chunk_sz
+	assert 0 < chunk_sz, "chunk size '%s' must be greater than 0" % chunk_sz
 
 	## Main:
 	total_len = len (seq)

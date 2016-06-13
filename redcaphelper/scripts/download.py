@@ -126,10 +126,10 @@ def main():
 	conn = Connection (args.url, args.token)
 
 	utils.msg_progress ('Downloading %s backup' % args.type)
-	recs = conn.export_recs() if (args.type == 'data') else conn.export_schema()
+	recs = conn.export_records_chunked() if (args.type == 'data') else conn.export_schema()
 
 	utils.msg_progress ('Saving backup as %s' % args.outfile)
-	flds = conn._proj.field_names if args.type == 'data' else SCHEMA_FLD_ORDER
+	flds = conn.field_names if args.type == 'data' else SCHEMA_FLD_ORDER
 	csvutils.write_csv (recs, args.outfile, flds)
 
 	utils.msg_progress ("Finished", True)

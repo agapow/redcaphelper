@@ -15,7 +15,7 @@ tasks like generating REDCap vocabularies and filling in import templates.
 
 
 Using redcaphelper
--------------------------
+------------------
 
 simpleredcapbuilder installs a single script, that is called::
 

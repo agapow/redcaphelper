@@ -37,7 +37,7 @@ __all__ = [
 
 ### CODE ###
 
-class Connection (object):
+class Connection (redcap.Project):
 	"""
 	A live connection to a REDCap database.
 
@@ -68,9 +68,9 @@ class Connection (object):
 			"redcap api url '%s' does not end in forward-slash" % url
 
 		## Main:
-		self._proj = redcap.Project (url, token)
+		super (Connection, self).__init__ (url, token)
 
-	def import_recs (self, recs, chunk_sz=consts.DEF_UPLOAD_CHUNK_SZ,
+	def import_records_chunked (self, recs, chunk_sz=consts.DEF_UPLOAD_CHUNK_SZ,
 			sleep=consts.DEF_SLEEP, overwrite=True):
 		"""
 		Import records into the attached database.
@@ -92,7 +92,7 @@ class Connection (object):
 		# TODO(paul): need date format option?
 
 		## Main:
-		id_fld = self._proj.def_field
+		id_fld = self.def_field
 		total_len = len (recs)
 
 		for start, stop in utils.chunked_enumerate (recs, chunk_sz):
@@ -100,7 +100,7 @@ class Connection (object):
 				start, stop-1, total_len, recs[start][id_fld], recs[stop-1][id_fld]
 			)
 			utils.msg_progress (msg)
-			response = self._proj.import_records (
+			response = self.import_records (
 				recs[start:stop],
 				overwrite='overwrite' if overwrite else 'normal'
 			)
@@ -110,7 +110,7 @@ class Connection (object):
 			if sleep and (stop != total_len):
 				time.sleep (sleep)
 
-	def export_recs (self, chunk_sz=consts.DEF_DOWNLOAD_CHUNK_SZ, ids=None,
+	def export_records_chunked (self, chunk_sz=consts.DEF_DOWNLOAD_CHUNK_SZ, ids=None,
 			flds=None):
 		"""
 		Download data in chunks to avoid memory errors.
@@ -133,11 +133,11 @@ class Connection (object):
 		# TODO(paul): combine chunking functions?
 
 		## Preconditions & preparation:
-		flds = flds or self._proj.def_field
+		flds = flds or self.def_field
 
 		## Main:
-		id_fld = self._proj.def_field
-		record_list = self._proj.export_records (fields=[id_fld])
+		id_fld = self.def_field
+		record_list = self.export_records (fields=[id_fld])
 		record_ids = [r[id_fld] for r in record_list]
 
 		try:
@@ -150,7 +150,7 @@ class Connection (object):
 				)
 				utils.msg_progress (msg)
 
-				chunked_response = self._proj.export_records (
+				chunked_response = self.export_records (
 					records=record_ids[start:stop])
 				response.extend (chunked_response)
 
@@ -172,19 +172,19 @@ class Connection (object):
 		These will be in the order they appear in the project.
 
 		"""
-		csv_txt = self._proj.export_metadata (format='csv')
+		csv_txt = self.export_metadata (format='csv')
 		csv_rdr = csv.DictReader (StringIO (csv_txt))
 		return [r for r in csv_rdr]
 
-	def export_field_names (self):
-		"""
-		Download the project fields.
-
-		These will be in the order they appear in the project. Remember that in
-		REDCap, IDs are "names" and titles are "labels".
-
-		"""
-		return [r['Variable / Field Name'] for r in self.export_schema()]
+	# def export_field_names (self):
+	# 	"""
+	# 	Download the project fields.
+	#
+	# 	These will be in the order they appear in the project. Remember that in
+	# 	REDCap, IDs are "names" and titles are "labels".
+	#
+	# 	"""
+	# 	return [r['Variable / Field Name'] for r in self.export_schema()]
 
 
 

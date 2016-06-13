@@ -1,0 +1,16 @@
+Design and development
+----------------------
+
+*Odd thoughts and ruminations, mostly justifying why things are the way they are.*
+
+There's a lot of value in making a more powerful and more compact schema for
+REDcap databases, but a lot of conflicting forces. The simple addition of a
+few columns seems the best solution, you can easily make an old schema into
+the new format with minial modification. This does set up a lot of parsing
+issues (e.g. telling the difference between repetition of the rows and
+sections). The qualifiers seem to simple solve this problem.
+
+This approach allowed me to collapse a 3000 item data dictionary down into less than 600 rows, with a commensurate consistency in how items were named and
+behaved.
+
+This project went rapidly through several iterations and some of the code and design is frankly a bit ropey and could be better written. However, it works.

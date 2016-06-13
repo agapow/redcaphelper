@@ -1,0 +1,11 @@
+redcaphelper can be installed in the usual sort of ways:
+
+* Download the repo, unpack it if necessary and use ``setup.py``::
+
+   % python setup.py install
+
+* Use a package manager pointed at the git repository::
+
+   > pip install git+https://github.com/agapow/redcaphelper.git
+
+redcaphelper has been built under Python3 but should run under Python2.

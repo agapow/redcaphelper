@@ -1,0 +1,16 @@
+History
+=======
+
+
+0.2 (2016/06/13)
+-------------------
+
+* refactored
+* added documentation
+* made Py2 and Py3 compatible
+
+
+0.1 (2015 sometime)
+-------------------
+
+* initial release

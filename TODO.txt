@@ -1,0 +1,5 @@
+To do
+=====
+
+* Allow downloading of particular fields and record ids
+* Better error handling - when you fails to connect to the REDCap API, it can be fairly opaque

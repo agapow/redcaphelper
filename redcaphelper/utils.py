@@ -5,7 +5,13 @@ Very assorted utilities and odds and ends for use in module.
 ### IMPORTS
 
 from __future__ import print_function
-from builtins import next
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+
+from builtins import range
 
 __all__ = [
 	'msg_progress',

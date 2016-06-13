@@ -2,9 +2,16 @@
 """
 Downloadthe contents or schema of a REDCap database.
 """
-from builtins import range
 
 ### IMPORTS
+
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import range
 
 import csv
 import os
@@ -62,7 +69,7 @@ def download_backup (conn, btype='data'):
 	else:
 		raise ValueError ("unknown backup type '%s'" % btype)
 	return csv_recs
-	
+
 
 def save_backup (recs, pth, flds):
 	utils.write_csv (recs, pth, flds)
@@ -107,35 +114,35 @@ def parse_clargs (clargs):
 		args.url = os.environ['REDCAP_API_URL']
 	if args.token is None:
 		args.token= os.environ['REDCAP_API_TOKEN']
-	
+
 	return args
-		
-			
-	
+
+
+
 def main (clargs):
 	import sys
-	
+
 	# get arguments (source db and output file)
 	args = parse_clargs (sys.argv[1:])
 
 	# connect to db & download backup
 	utils.progress_msg ('Connecting to %s' % args.url)
 	conn = new_connection (args.url, args.token)
-	
+
 	if args.outfile is None:
 		save_name = make_save_name (conn, SAVE_NAME_TMPL)
 	else:
 		save_name = args.outfile
 	utils.progress_msg ('Downloading %s backup' % args.type)
 	recs = download_backup (conn, btype=args.type)
-	
+
 	utils.progress_msg ('Saving backup as %s' % save_name)
 	flds = conn.field_names if args.type == 'data' else SCHEMA_FLD_ORDER
 	save_backup (recs, save_name, flds)
-	
+
 	utils.progress_msg ("Finished", True)
- 
-	
+
+
 
 if __name__ == '__main__':
 	main()

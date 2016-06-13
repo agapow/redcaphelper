@@ -8,17 +8,20 @@ called by cron, not used as a standalone general script. It is configured via
 all the settings at the top.
 """
 
-from __future__ import print_function
-from builtins import str
-
-__version__ = 0.3
-
 # TODO: logging?
 # TODO: read config file
 # TODO: encrypt
 
-
 ### IMPORTS
+
+from __future__ import print_function
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import absolute_import
+from builtins import open
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
 
 import logging
 import datetime

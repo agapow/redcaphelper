@@ -5,12 +5,18 @@ Utility functions for working with CSV files.
 ### IMPORTS
 
 from __future__ import print_function
-from builtins import next
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import absolute_import
+from builtins import open
+from future import standard_library
+standard_library.install_aliases()
+from builtins import range
+#from builtins import next
 
 __all__ = [
 	'read_csv',
 	'write_csv',
-	'read_csv_headers',
 	'write_redcap_csv',
 	'write_yaml',
 ]
@@ -66,16 +72,19 @@ def write_csv (recs, out_pth, hdr_flds=None, sort_on=None):
 
 ## IO: REDCap files
 
-def read_csv_headers (in_file):
-	"""
-	Get the header fields (and their order) from a CSV file.
-	"""
-	with open (in_file, 'rU') as in_hndl:
-		fields_rdr = csv.reader (in_hndl)
-		# there's a blank column in import file for unknown reasons
-		# get rid of it
-		hdr = [h for h in next(fields_rdr) if h]
-		return hdr
+# XXX: don't know why this is here. Get an awakward bit with the next call as
+# well. Can just call fieldnames instead on rdr.
+#
+# def read_csv_headers (in_file):
+# 	"""
+# 	Get the header fields (and their order) from a CSV file.
+# 	"""
+# 	with open (in_file, 'rU') as in_hndl:
+# 		fields_rdr = csv.reader (in_hndl)
+# 		# there's a blank column in import file for unknown reasons
+# 		# get rid of it
+# 		hdr = [h for h in next(fields_rdr) if h]
+# 		return hdr
 
 
 def write_redcap_csv (recs, out_file, hdr_flds):

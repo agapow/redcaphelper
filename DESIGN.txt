@@ -10,3 +10,5 @@ The scripts are also super important for automating REDCap tasks.
 Some of the modules internal organisation is confused, reflects the evolution of the code and could arguably be refactored.
 
 There's a whole lot of junk in the module that could be disposed of comfortably.
+
+Producing large REDCap vocabs is a huge pain in the ass, so the script for making vocabularies is a godsend. I hooked it up to the "Filter text through" command in TextMate for generating vocabularies easier within an editor.

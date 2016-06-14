@@ -86,7 +86,7 @@ Several of the scripts call for the database API url and token to be passed.
 
 Note the options ``chunk-size`` and ``overwrite``. Import is a typically memory intensive process for REDCap and large datasets can crash the server. By "chunking" into smaller packets, this can be avoided. The default "chunk" for REDCap is 100, but a good rule of thumb is to upload 1 million cells at a time.
 
-By default, import completely overwrite anything with the same unique record id. If overwrite is off, then blank / empty fields will not overwrite populated ones. Overwriting is the default behaviour. 
+By default, import completely overwrite anything with the same unique record id. If overwrite is off, then blank / empty fields will not overwrite populated ones. Overwriting is the default behaviour.
 
 
 **redcap-make-vocab** is a tool for use when designing REDCap schema. It either
@@ -113,6 +113,15 @@ converting internal whitespace to underscores.
 The vocabs produced are suitable for pasting into a REDCap data dcitionary. If
 the item-per-line form used in the online designer is desired, the ``-l`` flag
 can be used.
+
+
+Credits
+-------
+
+Thanks to Kester Jarvis for contributions, to Scott Burns for the original PyCap
+module and to the European Union FP7 EUCLIDS and H2020 PERFORM grants which
+funded me during the production of this code.
+
 
 
 References

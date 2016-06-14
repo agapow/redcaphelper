@@ -13,13 +13,13 @@ from future import standard_library
 standard_library.install_aliases()
 
 import os
-from redcaphelper import utils, csvutils, connection
+from redcaphelper import utils, csvutils, connection, consts
 from redcaphelper import __version__ as version
 
 
 ### MAIN
 
-def parse_clargs (clargs):
+def parse_clargs():
 	import argparse
 	aparser = argparse.ArgumentParser (
 		description='download contents or schema of a REDCap database'
@@ -40,8 +40,12 @@ def parse_clargs (clargs):
 	aparser.add_argument ('-c', "--chunk-size",
 		help='number of records to upload at a time (packet size)',
 		type=int,
-		default=consts.,
+		default=consts.DEF_UPLOAD_CHUNK_SZ,
 	)
+
+	aparser.add_argument ('--overwrite', dest='overwrite', action='store_true')
+	aparser.add_argument ('--no-overwrite', dest='overwrite', action='store_false')
+	aparser.set_defaults (overwrite=True)
 
 	aparser.add_argument ("infile",
 		help='file to be imported to redcap'
@@ -64,9 +68,8 @@ def parse_clargs (clargs):
 
 
 
-def main (clargs):
-	import sys
-	args = parse_clargs (sys.argv[1:])
+def main():
+	args = parse_clargs()
 
 	# connect to database
 	utils.msg_progress ('Connecting to %s' % args.url)
@@ -77,7 +80,7 @@ def main (clargs):
 	recs = csvutils.read_csv (args.infile)
 
 	utils.msg_progress ('Uploading records')
-	conn.import_recs (recs)
+	conn.import_records_chunked (recs, chunk_sz=chunk_size, overwrite=overwrite)
 
 	utils.msg_progress ("Finished", True)
 

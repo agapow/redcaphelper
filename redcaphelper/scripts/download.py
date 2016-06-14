@@ -3,6 +3,9 @@
 Download the contents or schema of a REDCap database.
 """
 
+# XXX: chunked download
+
+
 ### IMPORTS
 
 from __future__ import unicode_literals
@@ -84,6 +87,11 @@ def parse_clargs ():
 	)
 
 	aparser.add_argument ('-o', "--outfile",
+		help='where the backup is to be saved',
+		default=None,
+	)
+
+	aparser.add_argument ('-v', "--overwrite",
 		help='where the backup is to be saved',
 		default=None,
 	)

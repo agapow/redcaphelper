@@ -3,4 +3,10 @@ Design and development
 
 *Odd thoughts and ruminations, mostly justifying why things are the way they are.*
 
-Arguably, this 
+Arguably, the Connection lass adds only a small amount to the base Project class. On the other hand, the "chunking" of uploads is unavoidable when dealing with big datafiles (say, more than a million cells), so they're important additions.
+
+The scripts are also super important for automating REDCap tasks.
+
+Some of the modules internal organisation is confused, reflects the evolution of the code and could arguably be refactored.
+
+There's a whole lot of junk in the module that could be disposed of comfortably.

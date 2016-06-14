@@ -111,7 +111,7 @@ class Connection (redcap.Project):
 				time.sleep (sleep)
 
 	def export_records_chunked (self, chunk_sz=consts.DEF_DOWNLOAD_CHUNK_SZ,
-		ids=None, flds=None, overwrite=True):
+		ids=None, flds=None):
 		"""
 		Download data in chunks to avoid memory errors.
 
@@ -152,7 +152,6 @@ class Connection (redcap.Project):
 
 				chunked_response = self.export_records (
 					records=record_ids[start:stop],
-					overwrite='overwrite' if overwrite else 'normal',
 				)
 				response.extend (chunked_response)
 

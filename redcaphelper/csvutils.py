@@ -20,7 +20,7 @@ __all__ = [
 	'read_csv',
 	'write_csv',
 	'write_redcap_csv',
-	'write_yaml',
+	#'write_yaml',
 ]
 
 
@@ -125,31 +125,31 @@ def write_redcap_csv (recs, out_file, hdr_flds):
 
 
 ## IO: other
-
-def write_yaml (recs, out_pth, sort_on=None):
-	"""
-	Dump a series of records to a file in YAML format.
-
-	Args:
-		recs (seq): CSV records as dictionaries
-		out_pth (str): the path of the YAML file to write to
-		sort_on (str): the column header to sort records on
-
-	Mainly for debugging purposes.
-	"""
-	## Preconditions & preparation:
-	if sort_on:
-		recs = sorted (recs, key=lambda x: x[sort_on])
-
-	## Main:
-	from yaml import load, dump
-	try:
-		 from yaml import CLoader as Loader, CDumper as Dumper
-	except ImportError:
-		 from yaml import Loader, Dumper
-
-	with open (out_pth, 'w') as out_hndl:
-		output = dump (recs, out_hndl, Dumper=Dumper)
+#
+# def write_yaml (recs, out_pth, sort_on=None):
+# 	"""
+# 	Dump a series of records to a file in YAML format.
+#
+# 	Args:
+# 		recs (seq): CSV records as dictionaries
+# 		out_pth (str): the path of the YAML file to write to
+# 		sort_on (str): the column header to sort records on
+#
+# 	Mainly for debugging purposes.
+# 	"""
+# 	## Preconditions & preparation:
+# 	if sort_on:
+# 		recs = sorted (recs, key=lambda x: x[sort_on])
+#
+# 	## Main:
+# 	from yaml import load, dump
+# 	try:
+# 		 from yaml import CLoader as Loader, CDumper as Dumper
+# 	except ImportError:
+# 		 from yaml import Loader, Dumper
+#
+# 	with open (out_pth, 'w') as out_hndl:
+# 		output = dump (recs, out_hndl, Dumper=Dumper)
 
 
 

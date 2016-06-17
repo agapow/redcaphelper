@@ -110,8 +110,13 @@ class Connection (redcap.Project):
 			if sleep and (stop != total_len):
 				time.sleep (sleep)
 
-	def export_records_chunked (self, chunk_sz=consts.DEF_DOWNLOAD_CHUNK_SZ,
-		ids=None, flds=None):
+	def export_records_chunked (self,
+			records=None, fields=None, forms=None, events=None,
+			raw_or_label='raw', event_name='label', format='json',
+			export_survey_fields=False, export_data_access_groups=False,
+			df_kwargs=None, export_checkbox_labels=False,
+			chunk_sz=consts.DEF_DOWNLOAD_CHUNK_SZ,
+		):
 		"""
 		Download data in chunks to avoid memory errors.
 
@@ -136,22 +141,26 @@ class Connection (redcap.Project):
 		flds = flds or self.def_field
 
 		## Main:
-		id_fld = self.def_field
-		record_list = self.export_records (fields=[id_fld])
-		record_ids = [r[id_fld] for r in record_list]
+		if not records:
+			id_fld = self.def_field
+			record_list = self.export_records (fields=[id_fld])
+			records = [r[id_fld] for r in record_list]
 
 		try:
 			response = []
-			total_len = len (record_ids)
+			total_len = len (records)
 
-			for start, stop in utils.chunked_enumerate (record_ids, chunk_sz):
+			for start, stop in utils.chunked_enumerate (records, chunk_sz):
 				msg = "Downloading records %s-%s of %s ('%s' to '%s')" % (
-					start+1, stop, total_len, record_ids[start], record_ids[stop-1]
+					start+1, stop, total_len, records[start], records[stop-1]
 				)
 				utils.msg_progress (msg)
 
 				chunked_response = self.export_records (
-					records=record_ids[start:stop],
+					records=records[start:stop],
+					fields, forms, events, raw_or_label, event_name, format,
+					export_survey_fields, export_data_access_groups, df_kwargs,
+					export_checkbox_labels,
 				)
 				response.extend (chunked_response)
 

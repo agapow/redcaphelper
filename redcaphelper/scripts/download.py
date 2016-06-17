@@ -96,10 +96,16 @@ def parse_clargs ():
 		default=None,
 	)
 
-	aparser.add_argument ('-y', "--type",
+	aparser.add_argument ('-b', "--backup-type",
 		help='download schema or data',
 		choices=['data', 'schema'],
 		default='data',
+	)
+
+	aparser.add_argument ('-d', "--data-type",
+		help='download raw data or labels',
+		choices=['raw', 'label'],
+		default='raw',
 	)
 
 	args = aparser.parse_args()
@@ -134,7 +140,7 @@ def main():
 	conn = Connection (args.url, args.token)
 
 	utils.msg_progress ('Downloading %s backup' % args.type)
-	recs = conn.export_records_chunked() if (args.type == 'data') else conn.export_schema()
+	recs = conn.export_records_chunked (raw_or_label=args.data_type, format='csv') if (args.type == 'data') else conn.export_schema()
 
 	utils.msg_progress ('Saving backup as %s' % args.outfile)
 	flds = conn.field_names if args.type == 'data' else SCHEMA_FLD_ORDER

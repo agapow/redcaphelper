@@ -108,6 +108,12 @@ def parse_clargs ():
 		default='raw',
 	)
 
+	aparser.add_argument ('-c', "--chunk-size",
+		help='number of records to upload at a time (packet size)',
+		type=int,
+		default=consts.DEF_DOWNLOAD_CHUNK_SZ,
+	)
+
 	args = aparser.parse_args()
 
 	if args.url is None:
@@ -142,10 +148,10 @@ def main():
 
 	utils.msg_progress ('Downloading %s backup' % args.backup_type)
 	if (args.backup_type == 'data'):
-		csv_txt = conn.export_records_chunked (raw_or_label=args.data_type, format='csv')
+		csv_txt = conn.export_records_chunked (raw_or_label=args.data_type, format='csv', chunk_sz=args.chunk_size)
 		utils.msg_progress ('Saving backup as %s' % args.outfile)
 		with open (args.outfile, 'w') as out_hndl:
-			out_hndl.write (csv.txt)
+			out_hndl.write (csv_txt)
 	else:
 		recs = conn.export_schema()
 		utils.msg_progress ('Saving backup as %s' % args.outfile)

@@ -2,4 +2,5 @@ To do
 =====
 
 * Allow downloading of particular fields and record ids
-* Better error handling - when you fails to connect to the REDCap API, it can be fairly opaque
+
+* Better error handling - when you fails to connect to the REDCap API, it can be fairly opaque. For example, if you try and download too much at once, you just get a generic PyCap error with an empty string. Look for an empty string?

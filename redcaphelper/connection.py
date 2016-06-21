@@ -122,12 +122,14 @@ class Connection (redcap.Project):
 
 		Args:
 			chunk_sz (int): number of records to be downloaded in each batch
-			flds (seq): a list of the fields to be exported, defaults to all
-			ids (seq): a list of the IDs of the records to be exported, defaults
-				to all
+			format ('json', 'csv', 'dicts', 'xml', 'df'): the format of data to
+				be returned
 
 		Returns:
-			a series of records as dicts
+			a series of records in one format or another
+
+		Only arguments peculiar to this function are detailed. See
+		`export_records` for all others.
 
 		Exporting is also a memory-hungry process for REDCap. Thus we make it
 		easy on the server by batching up the downloaded records and combining
@@ -138,7 +140,7 @@ class Connection (redcap.Project):
 		# XXX(paul): dataframe export format should be easy and useful?
 
 		## Preconditions & preparation:
-		assert format in ('json', 'csv', 'dicts'), \
+		assert format in ('json', 'csv', 'dicts', 'xml', 'df'), \
 			"unrecognised export format '%s'" % format
 
 		## Main:
@@ -153,7 +155,7 @@ class Connection (redcap.Project):
 
 		# now do the actual download
 		try:
-			response = []
+			responses = []
 			total_len = len (records)
 
 			for start, stop in utils.chunked_enumerate (records, chunk_sz):
@@ -174,18 +176,33 @@ class Connection (redcap.Project):
 					export_data_access_groups=export_data_access_groups,
 					df_kwargs=df_kwargs,
 				)
-				response.extend (chunked_response)
+
+				# TODO: need to handle all possible ways of extending data
+				responses.append (chunked_response)
 
 		except redcap.RedcapError:
 			# XXX(paul): shouldn't we just raise the intial error
 			msg = "Chunked export failed for chunk_size %s" % chunk_sz
 			raise ValueError (msg)
 		else:
+			# combine all the responses: json, csv, dicts, xml, df
+			combined_reponses = None
+			if dl_format == 'csv':
+				combined_reponses = ''.join (responses)
+			if dl_format == 'json':
+				combined_reponses = []
+				for x in responses:
+					combined_responses.extend (x)
+			if dl_format == 'xml':
+				pass
+			if dl_format == 'df':
+				pass
+
 			# need to translate back into
 			if format == 'dicts':
-				response = csvutils.csv_str_to_dicts (response)
+				response = csvutils.csv_str_to_dicts (combined_reponses)
 
-			return response
+			return combined_reponses
 
 	def export_schema (self):
 		"""

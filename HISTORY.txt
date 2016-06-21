@@ -6,7 +6,10 @@ History
 ------------------
 
 * expanded export_records_chunked to use all params of export_records_chunked
-* added dicts, xml, ddataframes as export format for exports_records_chunked
+* added dicts as export format for exports_records_chunked
+* added xml, df as export format for export_records_chunked, although
+	I haven't worked out how to append them as yet.
+* added explicit chunking to download script as too big downloads were crashing shit
 
 
 0.2 (2016/06/13)

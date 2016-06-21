@@ -27,6 +27,7 @@ import redcap
 
 from . import consts
 from . import utils
+from . import csvutils
 
 __all__ = [
 	'Connection'
@@ -114,8 +115,7 @@ class Connection (redcap.Project):
 			records=None, fields=None, forms=None, events=None,
 			raw_or_label='raw', event_name='label', format='json',
 			export_survey_fields=False, export_data_access_groups=False,
-			df_kwargs=None, export_checkbox_labels=False,
-			chunk_sz=consts.DEF_DOWNLOAD_CHUNK_SZ,
+			df_kwargs=None, chunk_sz=consts.DEF_DOWNLOAD_CHUNK_SZ,
 		):
 		"""
 		Download data in chunks to avoid memory errors.
@@ -134,18 +134,24 @@ class Connection (redcap.Project):
 		them ourselves.
 
 		"""
-		# TODO(paul): allow setting of format?
 		# TODO(paul): combine chunking functions?
+		# XXX(paul): dataframe export format should be easy and useful?
 
 		## Preconditions & preparation:
-		flds = flds or self.def_field
+		assert format in ('json', 'csv', 'dicts'), \
+			"unrecognised export format '%s'" % format
 
 		## Main:
+		# if downloading all records get list
 		if not records:
 			id_fld = self.def_field
 			record_list = self.export_records (fields=[id_fld])
 			records = [r[id_fld] for r in record_list]
 
+		# work out download format
+		dl_format = 'csv' if format in ('dicts') else format
+
+		# now do the actual download
 		try:
 			response = []
 			total_len = len (records)
@@ -158,9 +164,15 @@ class Connection (redcap.Project):
 
 				chunked_response = self.export_records (
 					records=records[start:stop],
-					fields, forms, events, raw_or_label, event_name, format,
-					export_survey_fields, export_data_access_groups, df_kwargs,
-					export_checkbox_labels,
+					fields=fields,
+					forms=forms,
+					events=events,
+					raw_or_label=raw_or_label,
+					event_name=event_name,
+					format=dl_format,
+					export_survey_fields=export_survey_fields,
+					export_data_access_groups=export_data_access_groups,
+					df_kwargs=df_kwargs,
 				)
 				response.extend (chunked_response)
 
@@ -169,6 +181,10 @@ class Connection (redcap.Project):
 			msg = "Chunked export failed for chunk_size %s" % chunk_sz
 			raise ValueError (msg)
 		else:
+			# need to translate back into
+			if format == 'dicts':
+				response = csvutils.csv_str_to_dicts (response)
+
 			return response
 
 	def export_schema (self):
@@ -183,8 +199,8 @@ class Connection (redcap.Project):
 
 		"""
 		csv_txt = self.export_metadata (format='csv')
-		csv_rdr = csv.DictReader (StringIO (csv_txt))
-		return [r for r in csv_rdr]
+		return csvutils.csv_str_to_dicts (csv_txt)
+
 
 	# def export_field_names (self):
 	# 	"""

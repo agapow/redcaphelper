@@ -16,7 +16,15 @@ from builtins import range
 
 import csv
 
+# Py2 vs py3
+try:
+	from StringIO import StringIO
+except:
+	from io import StringIO
+
+
 __all__ = [
+	'csv_str_to_dicts',
 	'read_csv',
 	'write_csv',
 	'write_redcap_csv',
@@ -27,6 +35,11 @@ __all__ = [
 ### CONSTANTS & DEFINES
 
 ### CODE ###
+
+def csv_str_to_dicts (s):
+	csv_rdr = csv.DictReader (StringIO (s))
+	return [r for r in csv_rdr]
+
 
 def read_csv (in_pth):
 	"""

@@ -134,17 +134,23 @@ def parse_clargs ():
 def main():
 	# get arguments (source db and output file)
 	args = parse_clargs()
+	print (args)
 
 	# connect to db & download backup
 	utils.msg_progress ('Connecting to %s' % args.url)
 	conn = Connection (args.url, args.token)
 
-	utils.msg_progress ('Downloading %s backup' % args.type)
-	recs = conn.export_records_chunked (raw_or_label=args.data_type, format='csv') if (args.type == 'data') else conn.export_schema()
-
-	utils.msg_progress ('Saving backup as %s' % args.outfile)
-	flds = conn.field_names if args.type == 'data' else SCHEMA_FLD_ORDER
-	csvutils.write_csv (recs, args.outfile, flds)
+	utils.msg_progress ('Downloading %s backup' % args.backup_type)
+	if (args.backup_type == 'data'):
+		csv_txt = conn.export_records_chunked (raw_or_label=args.data_type, format='csv')
+		utils.msg_progress ('Saving backup as %s' % args.outfile)
+		with open (args.outfile, 'w') as out_hndl:
+			out_hndl.write (csv.txt)
+	else:
+		recs = conn.export_schema()
+		utils.msg_progress ('Saving backup as %s' % args.outfile)
+		flds = SCHEMA_FLD_ORDER
+		csvutils.write_csv (recs, args.outfile, flds)
 
 	utils.msg_progress ("Finished", True)
 

@@ -2,6 +2,13 @@ History
 =======
 
 
+0.2.3 (2016/06/21)
+------------------
+
+* expanded export_records_chunked to use all params of export_records_chunked
+* added dicts, xml, ddataframes as export format for exports_records_chunked
+
+
 0.2 (2016/06/13)
 -------------------
 

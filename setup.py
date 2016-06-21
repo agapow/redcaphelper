@@ -36,6 +36,7 @@ leverages the PyCap package.""",
 	zip_safe=False,
 	install_requires=[
 		'pycap',
+		'future',
 	],
 	entry_points={
 		'console_scripts': [

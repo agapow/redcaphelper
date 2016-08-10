@@ -2,6 +2,12 @@ History
 =======
 
 
+0.2.4 (2016/08/10)
+------------------
+
+* strange crash when particular schema was downloaded. Seems to be catching on BOM marker. Changed script & code so schema download uses encoding.
+
+
 0.2.3 (2016/06/21)
 ------------------
 

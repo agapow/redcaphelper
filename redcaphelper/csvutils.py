@@ -57,7 +57,7 @@ def read_csv (in_pth):
 		return [r for r in rdr]
 
 
-def write_csv (recs, out_pth, hdr_flds=None, sort_on=None):
+def write_csv (recs, out_pth, hdr_flds=None, sort_on=None, encoding=None):
 	"""
 	Write a set of records to a CSV file.
 
@@ -78,7 +78,7 @@ def write_csv (recs, out_pth, hdr_flds=None, sort_on=None):
 		hdr_flds = list(recs[0].keys())
 
 	## Main:
-	with open (out_pth, 'w') as out_hndl:
+	with open (out_pth, 'w', encoding=encoding) as out_hndl:
 		wrtr = csv.DictWriter (out_hndl, fieldnames=hdr_flds,
 			extrasaction='ignore', restval='')
 		wrtr.writeheader()

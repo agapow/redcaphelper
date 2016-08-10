@@ -81,6 +81,11 @@ def parse_clargs ():
 		default=None,
 	)
 
+	aparser.add_argument ("--encoding",
+		help='enforce an encoding for the saved file',
+		default=None,
+	)
+
 	aparser.add_argument ('-t', "--token",
 		help='API token',
 		default=None,
@@ -150,13 +155,13 @@ def main():
 	if (args.backup_type == 'data'):
 		csv_txt = conn.export_records_chunked (raw_or_label=args.data_type, format='csv', chunk_sz=args.chunk_size)
 		utils.msg_progress ('Saving backup as %s' % args.outfile)
-		with open (args.outfile, 'w') as out_hndl:
+		with open (args.outfile, 'w', encoding=args.encoding) as out_hndl:
 			out_hndl.write (csv_txt)
 	else:
 		recs = conn.export_schema()
 		utils.msg_progress ('Saving backup as %s' % args.outfile)
 		flds = SCHEMA_FLD_ORDER
-		csvutils.write_csv (recs, args.outfile, flds)
+		csvutils.write_csv (recs, args.outfile, hdr_flds=flds, encoding=args.encoding)
 
 	utils.msg_progress ("Finished", True)
 

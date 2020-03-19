@@ -17,6 +17,9 @@ from builtins import object
 
 import csv
 
+# for import_records_chunked()
+import time
+
 # Py2 vs py3
 try:
 	from StringIO import StringIO
